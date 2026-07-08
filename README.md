@@ -8,6 +8,38 @@ Posteriormente, mediante SQL Server Analysis Services (SSAS), se construyó un m
 Finalmente, con el fin de comunicar los resultados obtenidos de manera clara, visual y accesible, se desarrollaron reportes interactivos en Power BI, herramienta que permitió la creación de dashboards dinámicos con indicadores clave (KPIs), gráficos y filtros, facilitando la interpretación de la información y apoyando la toma de decisiones estratégicas.
 De esta manera, el Proyecto_Premios integra de forma completa el ciclo de vida de una solución de inteligencia de negocios: desde el almacenamiento y transformación de los datos, pasando por su modelado analítico, hasta la visualización final de resultados, evidenciando la aplicación práctica de herramientas del ecosistema Microsoft BI en un caso de uso real.
 
+#DIAGRAMA PREMIOS
+
+<img width="1210" height="812" alt="image" src="https://github.com/user-attachments/assets/070213f9-3ff0-4c93-a8de-d0b34096d597" />
+
+Cómo integrarlas en el paquete:
+
+Dim_Fecha — se genera una sola vez con una CTE recursiva (rango 2020-2030). Va en un Execute SQL Task, no en un Data Flow, porque no depende de datos transaccionales.
+Dim_Cliente, Dim_Premio, Dim_Sorteo, Dim_Comercio, Dim_Usuario — cada bloque "ORIGEN" es la query que pones en el OLE DB Source (modo "SQL Command") dentro de un Data Flow Task.
+Orden de carga: primero todas las dimensiones, después fact_ganadores y fact_transacciones, porque los hechos resuelven sus llaves subrogadas contra las dimensiones ya cargadas (por eso llevan INNER JOIN a dim_*).
+
+Dos estrategias para evitar duplicados en cargas repetidas:
+
+Dentro del Data Flow: usa un Lookup Transformation contra la dimensión destino comparando la llave natural (ej. cod_premio), y enruta solo el "No Match Output" al OLE DB Destination.
+Fuera del Data Flow: usa las sentencias MERGE que incluí para cada dimensión, dentro de un Execute SQL Task — hacen upsert (insertan lo nuevo, actualizan lo cambiado) en un solo paso.
+
+
+1.DATA FLOW CONJUNTO DE DATOS 
+
+<img width="658" height="385" alt="image" src="https://github.com/user-attachments/assets/25505bb2-6b51-4fea-a6c0-7ba7b4f98ca6" />
+
+2.DATA ORIGEN Y DESTINO 
+
+<img width="667" height="387" alt="image" src="https://github.com/user-attachments/assets/0fb7a569-c29a-4e76-9734-e58ce8d6be01" />
+
+3.DATA ORIGEN OLE DB 
+
+<img width="756" height="650" alt="image" src="https://github.com/user-attachments/assets/9c13db4e-8737-473b-9eca-e027839efb9d" />
+
+4.DATA DESTINO OLE DB 
+
+<img width="750" height="630" alt="image" src="https://github.com/user-attachments/assets/91b9f180-d748-4e45-8890-dd6f138c5b14" />
+
 
 
 /* ============================================================================
@@ -25,6 +57,9 @@ De esta manera, el Proyecto_Premios integra de forma completa el ciclo de vida d
      Alternativamente, usa las sentencias MERGE incluidas al final de cada
      bloque dentro de un Execute SQL Task.
    ============================================================================ */
+
+
+
 
 /* ============================================================================
    1. DIM_FECHA
@@ -215,4 +250,10 @@ FROM [dbo].[transacciones_clientes] t
 INNER JOIN [dbo].[dim_cliente]  dc   ON dc.cod_cliente = t.cod_cliente
 INNER JOIN [dbo].[dim_comercio] dcom ON dcom.comercio = t.comercio
 INNER JOIN [dbo].[dim_fecha]    df   ON df.fecha = t.fecha_transac;
+
+
+#
+
+
+
 
