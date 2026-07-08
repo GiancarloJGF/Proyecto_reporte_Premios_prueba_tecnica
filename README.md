@@ -254,6 +254,48 @@ INNER JOIN [dbo].[dim_fecha]    df   ON df.fecha = t.fecha_transac;
 
 #
 
+#CUBO PREMIOS
+
+<img width="949" height="871" alt="image" src="https://github.com/user-attachments/assets/2f5230de-7977-453b-8edb-1fd7d667dbd0" />
+
+
+Guía Power BI — Dashboard de Sorteos y Premios
+
+Página 1 — Resumen ejecutivo
+
+
+Tarjetas: Total Ganadores, Sorteos Activos, Monto Total Transacciones, % Cupo Utilizado
+Gráfico de líneas: Total Ganadores por mes (eje = dim_fecha[nombre_mes])
+Gráfico de barras horizontales: Top 5 premios por cantidad de ganadores
+<img width="749" height="591" alt="image" src="https://github.com/user-attachments/assets/0cfdd2a3-ea1e-4476-86c9-e225bb124dae" />
+
+
+Página 2 — Análisis de sorteos
+
+
+Tabla matricial: Sorteo × Premio, valores = Total Ganadores y % Cupo Utilizado
+Gráfico de barras apiladas: cupo máximo vs. ganadores reales por sorteo
+Segmentador (slicer): dim_sorteo[esactivo], rango de fecha_ejecucion
+<img width="749" height="630" alt="image" src="https://github.com/user-attachments/assets/03bcef4b-0aa1-4ee3-b61a-1e6d26790d81" />
+
+
+Página 3 — Análisis de clientes
+
+
+Tabla: Top clientes por número de premios ganados
+Tarjeta: Clientes Únicos Ganadores
+Gráfico de dispersión: monto transaccionado vs. cantidad de premios ganados por cliente (para ver si hay relación)
+<img width="763" height="557" alt="image" src="https://github.com/user-attachments/assets/9293eb6a-6b49-47e0-a860-9efd0bd82127" />
+
+
+Página 4 — Análisis de comercios
+
+
+Gráfico de barras: Monto Total Transacciones por comercio
+Gráfico de líneas: tendencia de transacciones en el tiempo
+Tarjeta: Ticket Promedio
+<img width="768" height="688" alt="image" src="https://github.com/user-attachments/assets/d95b00a5-4cf8-4de9-9058-54b3868caaac" />
+
 
 
 
